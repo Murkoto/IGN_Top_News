@@ -26,7 +26,11 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
 
     private List<Article> articles;
     private Context context;
+    private OnItemClickListener listener;
 
+    public interface OnItemClickListener {
+        void onItemClick(Article article);
+    }
 
     @Override
     public int getItemCount() {
@@ -45,12 +49,22 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
             image = (ImageView) itemView.findViewById(R.id.image);
         }
 
+        public void setOnClick(final Article article, final OnItemClickListener listener) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(article);
+                }
+            });
+        }
 
     }
 
-    public ArticleAdapter(List<Article> articles, Context context) {
+    public ArticleAdapter(List<Article> articles, Context context, OnItemClickListener listener) {
         this.articles = articles;
         this.context = context;
+        this.listener = listener;
     }
 
     @Override
@@ -66,5 +80,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ArticleV
         holder.title.setText(article.getTitle());
         holder.description.setText(article.getDescription());
         Glide.with(context).load(article.getUrlToImage()).into(holder.image);
+        holder.setOnClick(article, listener);
     }
 }

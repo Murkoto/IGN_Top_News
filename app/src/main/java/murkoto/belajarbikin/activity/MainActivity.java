@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.androidannotations.annotations.EActivity;
 
@@ -43,7 +44,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
                 List<Article> articles = response.body().getArticles();
-                recyclerView.setAdapter(new ArticleAdapter(articles, context));
+                recyclerView.setAdapter(new ArticleAdapter(articles, context, new ArticleAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Article article) {
+                        Toast toast = Toast.makeText(context, article.getUrl(), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }));
             }
 
             @Override
