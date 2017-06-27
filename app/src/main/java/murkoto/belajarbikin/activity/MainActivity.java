@@ -1,14 +1,12 @@
 package murkoto.belajarbikin.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.widget.Toast;
-
-import org.androidannotations.annotations.EActivity;
+import android.view.View;
 
 import java.util.List;
 
@@ -40,15 +38,19 @@ public class MainActivity extends AppCompatActivity {
         final Context context = this;
 
         Call<Articles> call = apiService.getTopArticles("ign", "top", API_KEY);
+
         call.enqueue(new Callback<Articles>() {
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
+                findViewById(R.id.progressBar).setVisibility(View.GONE);
+                findViewById(R.id.recycler_view_articles).setVisibility(View.VISIBLE);
                 List<Article> articles = response.body().getArticles();
                 recyclerView.setAdapter(new ArticleAdapter(articles, context, new ArticleAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(Article article) {
-                        Toast toast = Toast.makeText(context, article.getUrl(), Toast.LENGTH_LONG);
-                        toast.show();
+                        Intent intent = new Intent(MainActivity.this, NewsPageActivity.class);
+                        intent.putExtra("URL", article.getUrl());
+                        startActivity(intent);
                     }
                 }));
             }
@@ -57,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<Articles> call, Throwable t) {
             }
         });
-
     
     }
 }
